@@ -13,7 +13,8 @@ func main() {
 
 
 	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Bienvenue sur GameDex")
+	http.ServeFile(w, r, "index.html")
+
 	})
 
 	http.HandleFunc("GET /jeux", func(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameDex | Go Server</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><span>GAME</span>DEX</div>
+        <div class="nav-tag">GO WEB SERVER</div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="badge">
+                <span class="dot"></span>
+                SERVEUR EN LIGNE
+            </div>
+
+            <h1>Bienvenue dans<br><span>GameDex.</span></h1>
+
+            <p class="description">
+                Ton univers gaming, propulsé par un serveur Go.
+                Explore les routes, découvre le fonctionnement
+                de notre serveur et plonge dans le projet.
+            </p>
+
+            <a href="/jeux" class="button">
+                Explorer les jeux <span>→</span>
+            </a>
+        </section>
+
+        <section class="server-card">
+            <div class="card-top">
+                <div>
+                    <p class="small-label">INFRASTRUCTURE</p>
+                    <h2>Mon premier serveur</h2>
+                </div>
+                <div class="server-icon">⌘</div>
+            </div>
+
+            <div class="server-info">
+                <div class="info-item">
+                    <span class="label">LANGAGE</span>
+                    <span class="value">GO</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="label">PROTOCOLE</span>
+                    <span class="value">HTTP</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="label">STATUT</span>
+                    <span class="value online">● ONLINE</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="routes">
+            <div class="section-heading">
+                <p class="small-label">NAVIGATION</p>
+                <h2>Les routes du serveur</h2>
+            </div>
+
+            <div class="route-grid">
+                <a href="/" class="route-card">
+                    <div class="route-number">01</div>
+                    <h3>Accueil</h3>
+                    <p>Accéder à la page principale du serveur.</p>
+                    <div class="route-link">GET / <span>↗</span></div>
+                </a>
+
+                <a href="/jeux" class="route-card">
+                    <div class="route-number">02</div>
+                    <h3>Liste des jeux</h3>
+                    <p>Accéder à la route qui liste les jeux.</p>
+                    <div class="route-link">GET /jeux <span>↗</span></div>
+                </a>
+
+                <a href="/jeux/1" class="route-card">
+                    <div class="route-number">03</div>
+                    <h3>Jeu spécifique</h3>
+                    <p>Tester la récupération d'un jeu par identifiant.</p>
+                    <div class="route-link">GET /jeux/{id} <span>↗</span></div>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <div class="logo footer-logo"><span>GAME</span>DEX</div>
+            <p>Un projet web réalisé avec Go & HTTP.</p>
+        </footer>
+    </main>
+
+</body>
+</html>
