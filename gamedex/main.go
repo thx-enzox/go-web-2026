@@ -1,22 +1,24 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
 func main() {
-	
+	port := flag.String("port", "8080", "Port du serveur")
+	flag.Parse()
+
+
 	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Bienvenue sur GameDex")
 	})
 
-
 	http.HandleFunc("GET /jeux", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Voici la liste des jeux")
 	})
-
 
 	http.HandleFunc("GET /jeux/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -36,6 +38,9 @@ func main() {
 		fmt.Fprintf(w, "Vous consultez le jeu numéro %d", numero)
 	})
 
-	fmt.Println("Serveur lancé sur http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+
+	http.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	fmt.Println("Serveur lancé sur http://localhost:" + *port)
+	http.ListenAndServe(":"+*port, nil)
 }
