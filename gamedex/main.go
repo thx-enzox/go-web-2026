@@ -1,47 +1,50 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"log"
 	"net/http"
-	"strconv"
 )
 
 func main() {
-	port := flag.String("port", "8080", "Port du serveur")
-	flag.Parse()
+	http.HandleFunc("/", accueil)
+	http.HandleFunc("/jeux", afficherJeux)
 
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Serveur lancé sur http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func accueil(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
+}
 
-	})
+func afficherJeux(w http.ResponseWriter, r *http.Request) {
+	games, err := FetchGames()
+	if err != nil {
+		http.Error(w, "Impossible de récupérer les jeux : "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	http.HandleFunc("GET /jeux", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Voici la liste des jeux")
-	})
+	tournaments, err := FetchTournaments()
+	if err != nil {
+		http.Error(w, "Impossible de récupérer les tournois : "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	http.HandleFunc("GET /jeux/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
+	fmt.Fprintln(w, "<h1>GameDex - Liste des jeux</h1>")
 
-		numero, err := strconv.Atoi(id)
+	for _, game := range games {
+		nombreTournois := 0
 
-		if err != nil {
-			http.Error(w, "Identifiant invalide", http.StatusBadRequest)
-			return
+		for _, tournament := range tournaments {
+			if tournament.GameID == game.ID {
+				nombreTournois++
+			}
 		}
 
-		if numero < 1 || numero > 3 {
-			http.Error(w, "Jeu introuvable", http.StatusNotFound)
-			return
-		}
-
-		fmt.Fprintf(w, "Vous consultez le jeu numéro %d", numero)
-	})
-
-
-	http.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	fmt.Println("Serveur lancé sur http://localhost:" + *port)
-	http.ListenAndServe(":"+*port, nil)
+		fmt.Fprintf(w, "<h2>%s (%d) - %d tournoi(s)</h2>",
+			game.Name, game.Year, nombreTournois)
+	}
 }

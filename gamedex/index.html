@@ -1,100 +1,166 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameDex | Go Server</title>
+    <title>GameDex | Collection Gaming</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo"><span>GAME</span>DEX</div>
-        <div class="nav-tag">GO WEB SERVER</div>
-    </nav>
+    <header class="navbar">
+        <div class="logo">🎮 Game<span>Dex</span></div>
+        <nav>
+            <a href="/">Accueil</a>
+            <a href="#games">Jeux</a>
+            <a href="#tournaments">Tournois</a>
+        </nav>
+    </header>
 
     <main>
         <section class="hero">
-            <div class="badge">
-                <span class="dot"></span>
-                SERVEUR EN LIGNE
+            <div class="hero-content">
+                <p class="tag">GAME DATABASE</p>
+                <h1>Explore ton <span>univers gaming</span></h1>
+                <p class="description">
+                    Découvre les jeux disponibles et les tournois
+                    associés à ta collection.
+                </p>
+                <a href="#games" class="btn">Découvrir les jeux</a>
             </div>
-
-            <h1>Bienvenue dans<br><span>GameDex.</span></h1>
-
-            <p class="description">
-                Ton univers gaming, propulsé par un serveur Go.
-                Explore les routes, découvre le fonctionnement
-                de notre serveur et plonge dans le projet.
-            </p>
-
-            <a href="/jeux" class="button">
-                Explorer les jeux <span>→</span>
-            </a>
         </section>
 
-        <section class="server-card">
-            <div class="card-top">
+        <section class="stats">
+            <div class="stat-card">
+                <p>Collection</p>
+                <h2 id="game-count">--</h2>
+                <span>Jeux disponibles</span>
+            </div>
+
+            <div class="stat-card">
+                <p>Compétition</p>
+                <h2 id="tournament-count">--</h2>
+                <span>Tournois disponibles</span>
+            </div>
+        </section>
+
+        <section id="games" class="section">
+            <div class="section-header">
                 <div>
-                    <p class="small-label">INFRASTRUCTURE</p>
-                    <h2>Mon premier serveur</h2>
+                    <p class="tag">COLLECTION</p>
+                    <h2>Mes jeux</h2>
                 </div>
-                <div class="server-icon">⌘</div>
             </div>
 
-            <div class="server-info">
-                <div class="info-item">
-                    <span class="label">LANGAGE</span>
-                    <span class="value">GO</span>
-                </div>
-
-                <div class="info-item">
-                    <span class="label">PROTOCOLE</span>
-                    <span class="value">HTTP</span>
-                </div>
-
-                <div class="info-item">
-                    <span class="label">STATUT</span>
-                    <span class="value online">● ONLINE</span>
-                </div>
+            <div id="games-container" class="games-grid">
+                <p class="loading">Chargement des jeux...</p>
             </div>
         </section>
 
-        <section class="routes">
-            <div class="section-heading">
-                <p class="small-label">NAVIGATION</p>
-                <h2>Les routes du serveur</h2>
+        <section id="tournaments" class="section">
+            <div class="section-header">
+                <div>
+                    <p class="tag">COMPÉTITION</p>
+                    <h2>Tournois</h2>
+                </div>
             </div>
 
-            <div class="route-grid">
-                <a href="/" class="route-card">
-                    <div class="route-number">01</div>
-                    <h3>Accueil</h3>
-                    <p>Accéder à la page principale du serveur.</p>
-                    <div class="route-link">GET / <span>↗</span></div>
-                </a>
-
-                <a href="/jeux" class="route-card">
-                    <div class="route-number">02</div>
-                    <h3>Liste des jeux</h3>
-                    <p>Accéder à la route qui liste les jeux.</p>
-                    <div class="route-link">GET /jeux <span>↗</span></div>
-                </a>
-
-                <a href="/jeux/1" class="route-card">
-                    <div class="route-number">03</div>
-                    <h3>Jeu spécifique</h3>
-                    <p>Tester la récupération d'un jeu par identifiant.</p>
-                    <div class="route-link">GET /jeux/{id} <span>↗</span></div>
-                </a>
+            <div id="tournaments-container" class="tournament-list">
+                <p class="loading">Chargement des tournois...</p>
             </div>
         </section>
 
-        <footer>
-            <div class="logo footer-logo"><span>GAME</span>DEX</div>
-            <p>Un projet web réalisé avec Go & HTTP.</p>
-        </footer>
     </main>
+
+    <footer>
+        <p>GameDex © 2026 | Gaming database</p>
+    </footer>
+
+    <script>
+        const API_URL = "http://localhost:8081/api";
+
+        async function loadData() {
+            const gamesContainer = document.getElementById("games-container");
+            const tournamentsContainer = document.getElementById("tournaments-container");
+
+            try {
+                const [gamesResponse, tournamentsResponse] = await Promise.all([
+                    fetch(API_URL + "/games"),
+                    fetch(API_URL + "/tournaments")
+                ]);
+
+                if (!gamesResponse.ok || !tournamentsResponse.ok) {
+                    throw new Error("Erreur lors de la récupération des données");
+                }
+
+                const games = await gamesResponse.json();
+                const tournaments = await tournamentsResponse.json();
+
+                document.getElementById("game-count").textContent = games.length;
+                document.getElementById("tournament-count").textContent = tournaments.length;
+
+                gamesContainer.innerHTML = "";
+
+                games.forEach(game => {
+                    const gameTournaments = tournaments.filter(
+                        tournament => tournament.game_id === game.id
+                    );
+
+                    const card = document.createElement("article");
+                    card.className = "game-card";
+
+                    card.innerHTML = `
+                        <div class="game-number">#${game.id}</div>
+                        <h3>${game.name}</h3>
+                        <p class="game-year">${game.year}</p>
+                        <div class="game-footer">
+                            <span>🏆 ${gameTournaments.length} tournoi(s)</span>
+                        </div>
+                    `;
+
+                    gamesContainer.appendChild(card);
+                });
+
+                tournamentsContainer.innerHTML = "";
+
+                tournaments.forEach(tournament => {
+                    const game = games.find(g => g.id === tournament.game_id);
+
+                    const card = document.createElement("article");
+                    card.className = "tournament-card";
+
+                    card.innerHTML = `
+                        <div class="tournament-icon">🏆</div>
+                        <div class="tournament-info">
+                            <h3>${tournament.name}</h3>
+                            <p>${game ? game.name : "Jeu inconnu"}</p>
+                        </div>
+                    `;
+
+                    tournamentsContainer.appendChild(card);
+                });
+
+            } catch (error) {
+                gamesContainer.innerHTML = `
+                    <p class="error">
+                        Impossible de récupérer les jeux.
+                        Vérifie que la Mini API est lancée.
+                    </p>
+                `;
+
+                tournamentsContainer.innerHTML = `
+                    <p class="error">
+                        Impossible de récupérer les tournois.
+                    </p>
+                `;
+
+                console.error(error);
+            }
+        }
+
+        loadData();
+    </script>
 
 </body>
 </html>
