@@ -17,11 +17,11 @@ body {
     align-items: center;
     padding: 22px 8%;
     background: #111716;
-    border-bottom: 1px solid #222c28;
+    border-bottom: 1px solid #26332c;
 }
 
 .logo {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: bold;
 }
 
@@ -35,9 +35,8 @@ nav {
 }
 
 nav a {
-    color: #c2ccc5;
     text-decoration: none;
-    transition: 0.2s;
+    color: #c2ccc5;
 }
 
 nav a:hover {
@@ -45,24 +44,20 @@ nav a:hover {
 }
 
 .hero {
-    padding: 100px 8%;
-    background: linear-gradient(135deg, #101916, #0b0f0e);
-}
-
-.hero-content {
-    max-width: 700px;
+    padding: 90px 8%;
+    background: linear-gradient(135deg, #14221a, #0b0f0e);
 }
 
 .tag {
     color: #43d17d;
+    letter-spacing: 3px;
     font-size: 12px;
     font-weight: bold;
-    letter-spacing: 3px;
     margin-bottom: 15px;
 }
 
 .hero h1 {
-    font-size: 52px;
+    font-size: 48px;
     margin-bottom: 20px;
 }
 
@@ -70,67 +65,30 @@ nav a:hover {
     color: #43d17d;
 }
 
-.description {
+.hero p:last-child {
     color: #a3afa8;
-    line-height: 1.8;
-    margin-bottom: 30px;
 }
 
-.btn {
-    display: inline-block;
-    background: #43d17d;
-    color: #08110b;
-    text-decoration: none;
-    padding: 14px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-.btn:hover {
-    background: #62e695;
-    transform: translateY(-2px);
-}
-
-.stats {
-    display: flex;
-    gap: 25px;
-    padding: 40px 8%;
-}
-
-.stat-card {
-    background: #141b18;
-    border: 1px solid #26332c;
-    border-radius: 12px;
-    padding: 25px;
-    flex: 1;
-}
-
-.stat-card p {
-    color: #43d17d;
-    margin-bottom: 10px;
-}
-
-.stat-card h2 {
-    font-size: 35px;
-    margin-bottom: 8px;
-}
-
-.stat-card span {
-    color: #929e96;
-    font-size: 14px;
-}
-
-.section {
+.container {
     padding: 50px 8%;
 }
 
-.section-header {
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
 }
 
-.section-header h2 {
+.section-title h2 {
     font-size: 32px;
+}
+
+.count {
+    background: #17231c;
+    color: #43d17d;
+    padding: 12px 18px;
+    border-radius: 8px;
 }
 
 .games-grid {
@@ -140,12 +98,11 @@ nav a:hover {
 }
 
 .game-card {
-    position: relative;
     background: #141b18;
     border: 1px solid #26332c;
-    border-radius: 12px;
     padding: 25px;
-    transition: 0.25s;
+    border-radius: 12px;
+    transition: 0.2s;
 }
 
 .game-card:hover {
@@ -153,76 +110,41 @@ nav a:hover {
     border-color: #43d17d;
 }
 
-.game-number {
+.game-id {
     color: #43d17d;
-    font-size: 13px;
-    margin-bottom: 15px;
+    font-size: 12px;
+    margin-bottom: 18px;
+    letter-spacing: 2px;
 }
 
 .game-card h3 {
-    font-size: 21px;
-    margin-bottom: 10px;
+    font-size: 23px;
+    margin-bottom: 15px;
 }
 
-.game-year {
+.year {
     color: #929e96;
+    margin-bottom: 25px;
 }
 
-.game-footer {
-    border-top: 1px solid #26332c;
-    margin-top: 20px;
-    padding-top: 15px;
+.details {
+    display: inline-block;
+    text-decoration: none;
     color: #43d17d;
-    font-size: 14px;
+    border-top: 1px solid #26332c;
+    padding-top: 15px;
+    width: 100%;
 }
 
-.tournament-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.tournament-card {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    background: #141b18;
-    border: 1px solid #26332c;
-    padding: 20px;
-    border-radius: 12px;
-    transition: 0.2s;
-}
-
-.tournament-card:hover {
-    border-color: #43d17d;
-}
-
-.tournament-icon {
-    font-size: 30px;
-}
-
-.tournament-info h3 {
-    margin-bottom: 8px;
-}
-
-.tournament-info p {
-    color: #929e96;
-}
-
-.loading {
-    color: #929e96;
-}
-
-.error {
-    color: #ff6b6b;
-    padding: 20px;
+.details:hover {
+    color: #ffffff;
 }
 
 footer {
     text-align: center;
     padding: 30px;
-    border-top: 1px solid #26332c;
     color: #929e96;
+    border-top: 1px solid #26332c;
 }
 
 @media (max-width: 700px) {
@@ -231,22 +153,13 @@ footer {
         gap: 20px;
     }
 
-    nav {
-        gap: 15px;
-    }
-
     .hero h1 {
         font-size: 35px;
     }
 
-    .stats {
-        flex-direction: column;
-    }
-
-    .section,
     .hero,
-    .stats {
-        padding-left: 5%;
-        padding-right: 5%;
+    .container {
+        padding: 40px 5%;
     }
 }
+

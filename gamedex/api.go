@@ -7,12 +7,6 @@ import (
 	"time"
 )
 
-type Game struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-	Year int    `json:"year"`
-}
-
 type Tournament struct {
 	ID     int    `json:"id"`
 	GameID int    `json:"game_id"`
@@ -35,7 +29,6 @@ func FetchGames() ([]Game, error) {
 	}
 
 	var games []Game
-
 	err = json.NewDecoder(resp.Body).Decode(&games)
 	if err != nil {
 		return nil, err
@@ -56,11 +49,39 @@ func FetchTournaments() ([]Tournament, error) {
 	}
 
 	var tournaments []Tournament
-
 	err = json.NewDecoder(resp.Body).Decode(&tournaments)
 	if err != nil {
 		return nil, err
 	}
 
 	return tournaments, nil
+}
+
+func afficherJeux() error {
+	games, err := FetchGames()
+	if err != nil {
+		return err
+	}
+
+	tournaments, err := FetchTournaments()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("\n===== GAMEDEX =====")
+
+	for _, game := range games {
+		nombreTournois := 0
+
+		for _, tournament := range tournaments {
+			if tournament.GameID == game.ID {
+				nombreTournois++
+			}
+		}
+
+		fmt.Printf("%s (%d) - %d tournoi(s)\n",
+			game.Name, game.Year, nombreTournois)
+	}
+
+	return nil
 }
