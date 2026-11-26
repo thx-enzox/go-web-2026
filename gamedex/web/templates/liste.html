@@ -1,0 +1,42 @@
+
+{{template "header" .}}
+
+<section class="hero">
+	<p class="tag">GAMING DATABASE</p>
+	<h1>Ma collection <span>de jeux</span></h1>
+	<p>Retrouve tous les jeux disponibles dans ta GameDex.</p>
+</section>
+
+<main class="container">
+	<div class="section-title">
+		<div>
+			<p class="tag">COLLECTION</p>
+			<h2>Liste des jeux</h2>
+		</div>
+		<div class="count">{{len .Games}} jeux</div>
+	</div>
+
+	<form method="GET" action="/jeux">
+		<input type="search" name="q" value="{{.Query}}" placeholder="Rechercher un jeu">
+		<button type="submit">Rechercher</button>
+	</form>
+
+	{{if .Query}}
+	<p>Vous avez cherché : {{.Query}}</p>
+	{{end}}
+
+	<div class="games-grid">
+		{{range .Games}}
+		<div class="game-card">
+			<div class="game-id">GAME #{{.ID}}</div>
+			<h3>{{.Name}}</h3>
+			<p class="year">Sortie : {{.Year}}</p>
+			<a class="details" href="/jeux/{{.ID}}">Voir les détails →</a>
+		</div>
+		{{else}}
+		<p>Aucun jeu trouvé.</p>
+		{{end}}
+	</div>
+</main>
+
+{{template "footer" .}}

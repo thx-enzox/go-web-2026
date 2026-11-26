@@ -1,0 +1,34 @@
+
+{{template "header" .}}
+
+<main class="container">
+	<section class="hero">
+		<p class="tag">FICHE DU JEU</p>
+		<h1>{{.Game.Name}}</h1>
+		<p>Informations sur le jeu.</p>
+	</section>
+
+	<div class="game-card">
+		<div class="game-id">GAME #{{.Game.ID}}</div>
+		<h2>{{.Game.Name}}</h2>
+		<p class="year">Année de sortie : {{.Game.Year}}</p>
+	</div>
+
+	<section>
+		<h2>Tournois</h2>
+
+		{{range .Tournaments}}
+		<div class="game-card">
+			<h3>{{.Name}}</h3>
+			<p>Ville : {{.City}}</p>
+			<p>Date : {{.Date}}</p>
+		</div>
+		{{else}}
+		<p>Aucun tournoi disponible pour ce jeu.</p>
+		{{end}}
+	</section>
+
+	<a class="details" href="/jeux">← Retour aux jeux</a>
+</main>
+
+{{template "footer" .}}

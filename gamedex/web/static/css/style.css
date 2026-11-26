@@ -1,0 +1,165 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0b0f0e;
+    color: #e8eee9;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 8%;
+    background: #111716;
+    border-bottom: 1px solid #26332c;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #43d17d;
+}
+
+nav {
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #c2ccc5;
+}
+
+nav a:hover {
+    color: #43d17d;
+}
+
+.hero {
+    padding: 90px 8%;
+    background: linear-gradient(135deg, #14221a, #0b0f0e);
+}
+
+.tag {
+    color: #43d17d;
+    letter-spacing: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #43d17d;
+}
+
+.hero p:last-child {
+    color: #a3afa8;
+}
+
+.container {
+    padding: 50px 8%;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.section-title h2 {
+    font-size: 32px;
+}
+
+.count {
+    background: #17231c;
+    color: #43d17d;
+    padding: 12px 18px;
+    border-radius: 8px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.game-card {
+    background: #141b18;
+    border: 1px solid #26332c;
+    padding: 25px;
+    border-radius: 12px;
+    transition: 0.2s;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    border-color: #43d17d;
+}
+
+.game-id {
+    color: #43d17d;
+    font-size: 12px;
+    margin-bottom: 18px;
+    letter-spacing: 2px;
+}
+
+.game-card h3 {
+    font-size: 23px;
+    margin-bottom: 15px;
+}
+
+.year {
+    color: #929e96;
+    margin-bottom: 25px;
+}
+
+.details {
+    display: inline-block;
+    text-decoration: none;
+    color: #43d17d;
+    border-top: 1px solid #26332c;
+    padding-top: 15px;
+    width: 100%;
+}
+
+.details:hover {
+    color: #ffffff;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #929e96;
+    border-top: 1px solid #26332c;
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .hero h1 {
+        font-size: 35px;
+    }
+
+    .hero,
+    .container {
+        padding: 40px 5%;
+    }
+}
+
