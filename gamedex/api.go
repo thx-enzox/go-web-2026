@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -11,6 +12,8 @@ type Tournament struct {
 	ID     int    `json:"id"`
 	GameID int    `json:"game_id"`
 	Name   string `json:"name"`
+	City   string `json:"city"`
+	Date   string `json:"date"`
 }
 
 var client = http.Client{
@@ -85,3 +88,4 @@ func afficherJeux() error {
 
 	return nil
 }
+

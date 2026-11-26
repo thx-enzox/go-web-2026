@@ -4,133 +4,151 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Game struct {
-	ID   int
-	Name string
-	Year int
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Year int    `json:"year"`
 }
 
-var games = []Game{
-	{1, "Celeste", 2018},
-	{2, "Hades", 2020},
-	{3, "Rocket League", 2015},
-	{4, "Street Fighter 6", 2023},
-	{5, "Stardew Valley", 2016},
-	{6, "League of Legends", 2009},
-	{7, "Valorant", 2020},
-	{8, "Dead Cells", 2018},
-	{9, "Trackmania", 2020},
-	{10, "Mario Kart 8 Deluxe", 2017},
-	{11, "Hollow Knight", 2017},
-	{12, "Minecraft", 2011},
+type GamePage struct {
+	Game        Game
+	Tournaments []Tournament
 }
 
-type PageData struct {
+type ListPage struct {
 	Games []Game
+	Query string
 }
 
-var pageTemplate = template.Must(template.New("games").Parse(`
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>GameDex - Jeux</title>
-	<link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-	<header class="navbar">
-		<div class="logo">Game<span>Dex</span></div>
-		<nav>
-			<a href="/">Accueil</a>
-			<a href="/jeux">Jeux</a>
-		</nav>
-	</header>
+var games []Game
+var tournaments []Tournament
 
-	<section class="hero">
-		<p class="tag">GAMING DATABASE</p>
-		<h1>Ma collection <span>de jeux</span></h1>
-		<p>Retrouve tous les jeux disponibles dans ta GameDex.</p>
-	</section>
+var templates = template.Must(template.ParseGlob("templates/*.html"))
 
-	<main class="container">
-		<div class="section-title">
-			<div>
-				<p class="tag">COLLECTION</p>
-				<h2>Liste des jeux</h2>
-			</div>
-			<div class="count">{{len .Games}} jeux</div>
-		</div>
-
-		<div class="games-grid">
-			{{range .Games}}
-			<div class="game-card">
-				<div class="game-id">GAME #{{.ID}}</div>
-				<h3>{{.Name}}</h3>
-				<p class="year">Sortie : {{.Year}}</p>
-				<a class="details" href="/jeux/{{.ID}}">Voir les détails →</a>
-			</div>
-			{{end}}
-		</div>
-	</main>
-
-	<footer>
-		<p>GameDex © 2026</p>
-	</footer>
-</body>
-</html>
-`))
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-	fmt.Fprintln(w, "Bienvenue sur GameDex")
-}
-
-func gamesHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/jeux" {
-		http.NotFound(w, r)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	err := pageTemplate.Execute(w, PageData{Games: games})
+func render(w http.ResponseWriter, name string, data any) {
+	err := templates.ExecuteTemplate(w, name, data)
 	if err != nil {
+		log.Println("Erreur template :", err)
 		http.Error(w, "Erreur d'affichage", http.StatusInternalServerError)
 	}
 }
 
+func showError(w http.ResponseWriter, code int, message string) {
+	w.WriteHeader(code)
+	render(w, "erreur.html", message)
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		showError(w, http.StatusNotFound, "Page introuvable")
+		return
+	}
+	http.Redirect(w, r, "/jeux", http.StatusSeeOther)
+}
+
+func gamesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/jeux" {
+		showError(w, http.StatusNotFound, "Page introuvable")
+		return
+	}
+
+	q := r.URL.Query().Get("q")
+	filtered := []Game{}
+
+	for _, game := range games {
+		if strings.Contains(strings.ToLower(game.Name), strings.ToLower(q)) {
+			filtered = append(filtered, game)
+		}
+	}
+
+	render(w, "liste.html", ListPage{
+		Games: filtered,
+		Query: q,
+	})
+}
+
 func gameDetailHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
+
 	id, err := strconv.Atoi(idStr)
-
-	if err != nil {
-		http.Error(w, "ID invalide", http.StatusBadRequest)
+	if err != nil || id < 1 {
+		showError(w, http.StatusBadRequest, "Identifiant invalide")
 		return
 	}
 
-	if id < 1 || id > len(games) {
-		http.Error(w, "Jeu introuvable", http.StatusNotFound)
+	var selectedGame Game
+	found := false
+
+	for _, game := range games {
+		if game.ID == id {
+			selectedGame = game
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		showError(w, http.StatusNotFound, "Jeu introuvable")
 		return
 	}
 
-	fmt.Fprintf(w, "Jeu : %s (%d)", games[id-1].Name, games[id-1].Year)
+	var gameTournaments []Tournament
+
+	for _, tournament := range tournaments {
+		if tournament.GameID == selectedGame.ID {
+			gameTournaments = append(gameTournaments, tournament)
+		}
+	}
+
+	render(w, "jeu.html", GamePage{
+		Game:        selectedGame,
+		Tournaments: gameTournaments,
+	})
+}
+
+func brokenHandler(w http.ResponseWriter, r *http.Request) {
+	showError(w, http.StatusInternalServerError, "Erreur serveur")
+}
+
+func slowHandler(w http.ResponseWriter, r *http.Request) {
+	showError(w, http.StatusBadGateway, "Service indisponible")
 }
 
 func main() {
-	http.HandleFunc("GET /", homeHandler)
-	http.HandleFunc("GET /jeux", gamesHandler)
-	http.HandleFunc("GET /jeux/{id}", gameDetailHandler)
+	var err error
 
-	http.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	games, err = FetchGames()
+	if err != nil {
+		log.Fatal("Impossible de charger les jeux :", err)
+	}
+
+	tournaments, err = FetchTournaments()
+	if err != nil {
+		log.Fatal("Impossible de charger les tournois :", err)
+	}
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /{$}", homeHandler)
+	mux.HandleFunc("GET /jeux", gamesHandler)
+	mux.HandleFunc("GET /jeux/{id}", gameDetailHandler)
+
+	mux.HandleFunc("GET /api/broken", brokenHandler)
+	mux.HandleFunc("GET /api/slow", slowHandler)
+
+	mux.Handle("GET /static/", http.StripPrefix("/static/",
+		http.FileServer(http.Dir("static"))))
 
 	fmt.Println("Serveur lancé sur http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+
+	err = http.ListenAndServe(":8080", mux)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
